@@ -4,7 +4,7 @@ import Navigation from "./components/Navigation/Navigation";
 import Rank from "./components/Rank/Rank";
 import "./App.css";
 // import Particlebackground from "./components/ParticleBackground/ParticleBackground";
-import Facerecognition from "./components/FaceRecognition/FaceRecognition";
+import Facedetection from "./components/FaceDetection/FaceDetection";
 import Signin from "./components/Signin/Signin";
 import Register from "./components/Register/Register";
 
@@ -118,7 +118,7 @@ class App extends React.Component {
               onInputChange={this.onInputChange}
               onSubmit={onSubmit}
             />
-            <Facerecognition
+            <Facedetection
               imageUrl={this.state.imageUrl}
               box={this.state.parsedBoundingBox}
             />

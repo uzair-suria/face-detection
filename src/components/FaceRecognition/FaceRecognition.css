@@ -1,0 +1,7 @@
+.container {
+  position: relative;
+}
+
+.box {
+  border: blue solid 2px;
+}

@@ -42,13 +42,12 @@ class App extends React.Component {
   };
 
   calculateFaceLocation = (data) => {
-    const rawBoundingBox = JSON.parse(data, null, 2).outputs[0].data.regions[0]
-      .region_info.bounding_box;
+    const rawBoundingBox =
+      data.outputs[0].data.regions[0].region_info.bounding_box;
 
     const image = document.getElementById("inputImage");
     const width = Number(image.width);
     const height = Number(image.height);
-    console.log(width, height);
 
     const box = {
       top: rawBoundingBox.top_row * height,
@@ -57,11 +56,8 @@ class App extends React.Component {
       left: rawBoundingBox.left_col * width,
     };
     this.setState({ parsedBoundingBox: box });
-
-    console.log(this.state.parsedBoundingBox);
   };
   onInputChange = (event) => {
-    console.log(event.target.value);
     this.setState({ input: event.target.value });
   };
 
@@ -75,54 +71,35 @@ class App extends React.Component {
   };
 
   render() {
-    const reqBody = JSON.stringify({
-      user_app_id: {
-        user_id: "uzairazizsuria",
-        app_id: "smart-brain",
-      },
-      inputs: [
-        {
-          data: {
-            image: {
-              url: this.state.input,
-            },
-          },
-        },
-      ],
-    });
-
-    const requestOptions = {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        Authorization: "Key 1669f156181541e0962f41530c8db8c9",
-      },
-      body: reqBody,
-    };
-
     const onSubmit = () => {
       this.setState({ imageUrl: this.state.input, parsedBoundingBox: {} });
-      fetch(
-        "https://api.clarifai.com/v2/models/f76196b43bbd45c99b4f3cd8e8b40a8a/outputs",
-        requestOptions
-      )
-        .then((response) => response.text())
-        .then((result) => {
-          if (result) {
-            fetch("http://localhost:3010/image", {
-              method: "put",
-              headers: { "Content-type": "application/json" },
-              body: JSON.stringify({
-                id: this.state.user.id,
-              }),
-            })
-              .then((res) => res.json())
-              .then((count) => {
-                console.log(count);
-                this.setState({ user: { ...this.state.user, entries: count } });
-              });
-          }
-          this.calculateFaceLocation(result);
+      fetch("http://localhost:3010/imageurl", {
+        method: "post",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify({
+          input: this.state.input,
+        }),
+      })
+        .then((res) => {
+          res = res.json().then((data) => {
+            if (data) {
+              fetch("http://localhost:3010/image", {
+                method: "put",
+                headers: { "Content-type": "application/json" },
+                body: JSON.stringify({
+                  id: this.state.user.id,
+                }),
+              })
+                .then((res) => res.json())
+                .then((count) => {
+                  // console.log(count);
+                  this.setState({
+                    user: { ...this.state.user, entries: count },
+                  });
+                });
+            }
+            this.calculateFaceLocation(data);
+          });
         })
         .catch((error) => console.log("error", error));
     };

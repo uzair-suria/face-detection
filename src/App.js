@@ -73,7 +73,7 @@ class App extends React.Component {
   render() {
     const onSubmit = () => {
       this.setState({ imageUrl: this.state.input, parsedBoundingBox: {} });
-      fetch("http://localhost:3010/imageurl", {
+      fetch("https://uas-face-detection-app.herokuapp.com/imageurl", {
         method: "post",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({
@@ -83,7 +83,7 @@ class App extends React.Component {
         .then((res) => {
           res = res.json().then((data) => {
             if (data) {
-              fetch("http://localhost:3010/image", {
+              fetch("https://uas-face-detection-app.herokuapp.com/image", {
                 method: "put",
                 headers: { "Content-type": "application/json" },
                 body: JSON.stringify({
